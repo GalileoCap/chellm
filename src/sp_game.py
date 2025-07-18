@@ -1,21 +1,21 @@
 import chess
 from typing import Literal
-from langchain_core.language_models import BaseChatModel
-from langchain_ollama.chat_models import ChatOllama
+from langchain.chat_models import init_chat_model
+from langchain_core.runnables import Runnable
 
 from ai import get_ai_move
 from base_game import BaseGame
 
 
 class SPGame(BaseGame):
-    llm: BaseChatModel
+    llm: Runnable
     max_retries: int
 
     def __init__(
         self, model: str, white: Literal["p1", "p2"], max_retries: int
     ) -> None:
         super().__init__(white)
-        self.llm = ChatOllama(model=model)
+        self.llm = init_chat_model(model=model)
         self.max_retries = max_retries
 
     def get_p1_move(self) -> chess.Move:
