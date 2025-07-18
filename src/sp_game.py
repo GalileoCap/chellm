@@ -4,6 +4,7 @@ from langchain.chat_models import init_chat_model
 from langchain_core.runnables import Runnable
 
 from ai import get_ai_move
+from human import get_human_move
 from base_game import BaseGame
 
 
@@ -19,9 +20,7 @@ class SPGame(BaseGame):
         self.max_retries = max_retries
 
     def get_p1_move(self) -> chess.Move:
-        print(self.board)
-        msg = input("> ")
-        return self.board.parse_san(msg)
+        return get_human_move(self.board)
 
     def get_p2_move(self) -> chess.Move:
         print("...")

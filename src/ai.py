@@ -5,6 +5,8 @@ import jinja2
 from langchain_core.runnables import Runnable
 from langchain_core.messages import AIMessage, AnyMessage, HumanMessage, SystemMessage
 
+from messages import get_move_error_message
+
 SYS_PROMPT: jinja2.Template | None = None
 SYS_PROMPT_PATH: str = "sys_prompt.jinja"
 
@@ -31,12 +33,13 @@ def get_ai_move(
         else:
             try:
                 move = board.parse_san(reply)
-            except chess.InvalidMoveError:
-                history.append(HumanMessage("That is not a valid long SAN move"))
-            except chess.IllegalMoveError:
-                history.append(HumanMessage("That move is illegal"))
-            except chess.AmbiguousMoveError:
-                history.append(HumanMessage("That move not a valid long SAN move"))
+            except (
+                chess.InvalidMoveError,
+                chess.IllegalMoveError,
+                chess.AmbiguousMoveError,
+            ) as err:
+                err_msg = get_move_error_message(err)
+                history.append(HumanMessage(err_msg))
 
     if move is None:
         ai_messages = filter(lambda m: isinstance(m, AIMessage), history)

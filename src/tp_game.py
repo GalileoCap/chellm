@@ -2,6 +2,7 @@ import chess
 from typing import Literal
 
 from base_game import BaseGame
+from human import get_human_move
 
 
 class TPGame(BaseGame):
@@ -15,6 +16,4 @@ class TPGame(BaseGame):
         return self.get_player_move("p2")
 
     def get_player_move(self, player: Literal["p1", "p2"]) -> chess.Move:
-        print(self.board)
-        msg = input(f"{player}> ")
-        return self.board.parse_san(msg)
+        return get_human_move(self.board, player=player)
