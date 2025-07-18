@@ -1,12 +1,11 @@
 import chess
 from typing import Literal
 from langchain_core.language_models import BaseChatModel
-from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_core.runnables import Runnable
 from langchain_ollama.chat_models import ChatOllama
 
+from ai import get_ai_move
 from base_game import BaseGame
-from utils import get_system_prompt
 
 
 class NPGame(BaseGame):
@@ -38,19 +37,11 @@ class NPGame(BaseGame):
         print("...")
 
         llm = self.player_llm(player)
-        prompt = get_system_prompt().render(
-            color=chess.COLOR_NAMES[self.player_color(player)],
-            board=self.board,
-        )
+        color = self.player_color(player)
+        move = get_ai_move(llm, color, self.board)
 
-        reply_msg = llm.invoke([SystemMessage(prompt), HumanMessage("")])
-        reply = reply_msg.text().strip().lower()
-        if reply == "fold":
-            raise NotImplementedError("fold")
-        else:
-            move = self.board.parse_san(reply)
-            print(move.uci())
-            return move
+        print(move.uci())
+        return move
 
     def player_llm(self, player: Literal["p1", "p2"]) -> Runnable:
         match player:
