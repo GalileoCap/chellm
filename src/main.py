@@ -1,9 +1,8 @@
 import argparse
 import random
 
-import chess
-
-from game import Game, Player
+from game import Game
+from player import Player
 
 M_HELP_BASE = "as is accepted by Langchain's init_chat_model (eg: ollama:llama3.2:8b or openai:o4-mini)."
 RETRY_HELP = "Number of retries allowed for AI players before stopping execution. Use -1 to allow running for ever."
@@ -29,12 +28,12 @@ def run_tournament(players: list[Player]) -> Player:
         for p1, p2 in pairs:
             game = Game(p1, p2, args.retry)
             outcome = game.loop_full()
-            match outcome.winner:
-                case chess.WHITE:
+            match outcome:
+                case "white" | "black-failed":
                     players.append(p1)
-                case chess.BLACK:
+                case "black" | "white-failed":
                     players.append(p2)
-                case None:
+                case "draw":
                     players.append(p1)
                     players.append(p2)
     return players[0]
@@ -54,6 +53,6 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    players = [Player(str(i), model) for i, model in enumerate(args.models)]
+    players = list(map(Player, args.models))
     winner = run_tournament(players)
     print(winner)

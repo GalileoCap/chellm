@@ -6,17 +6,17 @@ from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import AIMessage, AnyMessage, HumanMessage, SystemMessage
 from langchain.chat_models import init_chat_model
 
+from utils import FailedToMove
+
 SYS_PROMPT: jinja2.Template | None = None
 SYS_PROMPT_PATH: str = "sys_prompt.jinja"
 
 
 class Player:
-    id: str
     model: str
     llm: BaseChatModel
 
-    def __init__(self, id: str, model: str) -> None:
-        self.id = id
+    def __init__(self, model: str) -> None:
         self.model = model
         self.llm = init_chat_model(model=model)
 
@@ -54,10 +54,16 @@ class Player:
         if move is None:
             ai_messages = filter(lambda m: isinstance(m, AIMessage), history)
             history_fmt = [m.text().strip().lower() for m in ai_messages]
-            raise RuntimeError(
+            raise FailedToMove(
                 f"failed to produce a valid move in {retries} retries, tries: {history_fmt}"
             )
         return (move, retries)
+
+    def __str__(self) -> str:
+        return self.model
+
+    def __repr__(self) -> str:
+        return f"Player({self.model})"
 
 
 def should_retry(retries: int, max_retries: int) -> bool:

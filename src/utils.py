@@ -1,0 +1,2 @@
+class FailedToMove(Exception):
+    pass
