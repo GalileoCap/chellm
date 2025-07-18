@@ -5,7 +5,7 @@ from sp_game import SPGame
 from tp_game import TPGame
 
 M_HELP_BASE = "as is accepted by Langchain's init_chat_model (eg: ollama:llama3.2:8b or openai:o4-mini)."
-RETRY_HELP = "Number of retries before stopping execution."
+RETRY_HELP = "Number of retries allowed for AI players before stopping execution. Use -1 to allow running for ever."
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -25,7 +25,7 @@ if __name__ == "__main__":
         "-p2m",
         help="Model for player 2 " + M_HELP_BASE + " Takes precedence over -m.",
     )
-    np_parser.add_argument("--retry", type=int, default=5, help=RETRY_HELP)
+    np_parser.add_argument("--retry", type=int, required=True, help=RETRY_HELP)
 
     sp_parser = sub.add_parser("1", help="Single player game against AI")
     sp_parser.add_argument(
@@ -35,7 +35,7 @@ if __name__ == "__main__":
         + M_HELP_BASE
         + " Used by both players unless specified.",
     )
-    sp_parser.add_argument("--retry", type=int, default=5, help=RETRY_HELP)
+    sp_parser.add_argument("--retry", type=int, required=True, help=RETRY_HELP)
 
     tp_parser = sub.add_parser("2", help="Two player game")
 

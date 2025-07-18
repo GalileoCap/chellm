@@ -49,7 +49,8 @@ def get_ai_move(
 
 def should_retry(retries: int, max_retries: int) -> bool:
     return (
-        retries == 0
+        max_retries == -1  # Infinite retries
+        or retries == 0  # First trye
         or retries < max_retries
         # or input("retry? (Y/n)").strip().lower() == "n")
     )
