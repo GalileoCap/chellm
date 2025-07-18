@@ -7,7 +7,7 @@ from ai import get_ai_move
 from base_game import BaseGame
 
 
-class NPGame(BaseGame):
+class Game(BaseGame):
     p1_llm: Runnable
     p2_llm: Runnable
     max_retries: int
@@ -20,14 +20,6 @@ class NPGame(BaseGame):
         self.p2_llm = init_chat_model(model=p2_model)
         self.max_retries = max_retries
 
-    def loop_full(self) -> chess.Outcome:
-        print(self.board)
-        return super().loop_full()
-
-    def loop_step(self) -> None:
-        super().loop_step()
-        print(self.board)
-
     def get_p1_move(self) -> chess.Move:
         return self.get_player_move("p1")
 
@@ -35,13 +27,9 @@ class NPGame(BaseGame):
         return self.get_player_move("p2")
 
     def get_player_move(self, player: Literal["p1", "p2"]) -> chess.Move:
-        print("...")
-
         llm = self.player_llm(player)
         color = self.player_color(player)
-        (move, retries) = get_ai_move(llm, color, self.board, self.max_retries)
-
-        print(f"{move.uci()} in {retries} retries")
+        (move, _) = get_ai_move(llm, color, self.board, self.max_retries)
         return move
 
     def player_llm(self, player: Literal["p1", "p2"]) -> Runnable:

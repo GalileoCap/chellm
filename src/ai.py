@@ -5,8 +5,6 @@ import jinja2
 from langchain_core.runnables import Runnable
 from langchain_core.messages import AIMessage, AnyMessage, HumanMessage, SystemMessage
 
-from messages import get_move_error_message
-
 SYS_PROMPT: jinja2.Template | None = None
 SYS_PROMPT_PATH: str = "sys_prompt.jinja"
 
@@ -66,3 +64,17 @@ def get_system_prompt() -> jinja2.Template:
         with open(SYS_PROMPT_PATH, "r") as fin:
             SYS_PROMPT = jinja2.Template(fin.read())
     return cast(jinja2.Template, SYS_PROMPT)
+
+
+def get_move_error_message(
+    err: chess.InvalidMoveError | chess.IllegalMoveError | chess.AmbiguousMoveError,
+) -> str:
+    match type(err):
+        case chess.InvalidMoveError:
+            return "That is not a valid long SAN move"
+        case chess.IllegalMoveError:
+            return "That is an illegal move"
+        case chess.AmbiguousMoveError:
+            return "That move is ambiguous, specify the start and end positions"
+        case _:
+            raise ValueError(f"invalid error: {err}")
