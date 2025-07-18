@@ -6,18 +6,7 @@ from langchain_core.runnables import Runnable
 from langchain_ollama.chat_models import ChatOllama
 
 from base_game import BaseGame
-
-SYSTEM_PROMPT = """
-You are a grand master chess player playing a match as {color}.
-
-You must produce one of the following:
-- A move to play in Standard Algebaric Notation (SAN). Do NOT use PGN
-- The word "fold" to give up.
-Do not include any other text.
-
-The state of the board is the following:
-{board}
-"""
+from utils import get_system_prompt
 
 
 class NPGame(BaseGame):
@@ -49,7 +38,7 @@ class NPGame(BaseGame):
         print("...")
 
         llm = self.player_llm(player)
-        prompt = SYSTEM_PROMPT.format(
+        prompt = get_system_prompt().render(
             color=chess.COLOR_NAMES[self.player_color(player)],
             board=self.board,
         )
