@@ -11,14 +11,14 @@ class Game(BaseGame):
     max_retries: int
 
     @classmethod
-    def play(cls, p1: Player, p2: Player, max_retries: int) -> chess.Outcome:
-        game = cls(p1, p2, max_retries)
+    def play(cls, white: Player, black: Player, max_retries: int) -> chess.Outcome:
+        game = cls(white, black, max_retries)
         return game.loop_full()
 
-    def __init__(self, p1: Player, p2: Player, max_retries: int) -> None:
+    def __init__(self, white: Player, black: Player, max_retries: int) -> None:
         super().__init__("p1")
-        self.p1 = p1
-        self.p2 = p2
+        self.p1 = white
+        self.p2 = black
         self.max_retries = max_retries
 
     def get_p1_move(self) -> chess.Move:
