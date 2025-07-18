@@ -1,6 +1,6 @@
 import argparse
 
-from game import Game
+from game import Game, Player
 
 M_HELP_BASE = "as is accepted by Langchain's init_chat_model (eg: ollama:llama3.2:8b or openai:o4-mini)."
 RETRY_HELP = "Number of retries allowed for AI players before stopping execution. Use -1 to allow running for ever."
@@ -9,8 +9,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         prog="chellm", description="Watch LLMs play chess!"
     )
-
-    parser.add_argument("-w", choices=["p1", "p2"], default="p1")
 
     parser.add_argument("-m", help="Model for both players " + M_HELP_BASE)
     parser.add_argument(
@@ -30,6 +28,9 @@ if __name__ == "__main__":
     if p1_model is None:
         raise ValueError("either -m or -p1m and -p2m are a required")
 
-    game = Game(p1_model, p2_model, args.w, args.retry)
+    p1 = Player("p1", p1_model)
+    p2 = Player("p2", p1_model)
+
+    game = Game(p1, p2, args.retry)
     winner = game.loop_full()
     print(winner)
